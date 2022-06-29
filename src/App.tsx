@@ -13,53 +13,54 @@ import {
   useMediaQuery,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
 import { ColorModeSwitcher } from "./ColorModeSwitcher";
 import logo from "./img/logo.png";
 import Image from "components/Image";
-import axios from "axios";
 import TokenCard from "components/TokenCard";
+import useGetTokenMedata from "hooks/useGetNftMedata";
 
-const prefixUrl = `https://ipfs.io/ipfs`;
-const AINIGHT_CONTRACT_ADDRESS =
-  "QmS9iyctsbcNi5CSc9YGxVXzPFTMmZofGkyQ6yoyi5qqKg";
-
-const useGetTokenMedata = () => {
-  const {
-    data: tokenMetadataResult,
-    isLoading: isLoadingMetadata,
-    mutate,
-  } = useMutation((tokenId: string) =>
-    axios.get(`${prefixUrl}/${AINIGHT_CONTRACT_ADDRESS}/${tokenId}`)
-  );
-
-  const metadata = tokenMetadataResult?.data;
-  const imgUrl = metadata?.image
-    ? `${prefixUrl}/${metadata?.image.replace("ipfs://", "")}`
-    : null;
-
-  return {
-    mutate,
-    isLoading: isLoadingMetadata,
-    hiResImg: imgUrl,
-    metadata,
-  };
-};
+const AINB_CONTRACT_ADDRESS = "0x64b6b4142d4D78E49D53430C1d3939F2317f9085";
+const MOONBIRD_ADDRESS = "0x23581767a106ae21c074b2276D25e5C3e136a68b";
+const AI_CONTRACT_ADDRESS = "0xCd8426DA78377150B04b1D7a88aedc24cCaC6701";
 
 const FieldName = "tokenId";
 
 export const App = () => {
   const [isLargerThan720] = useMediaQuery("(min-width: 720px)");
-  const { mutate, hiResImg, metadata, isLoading } = useGetTokenMedata();
-
   const {
-    handleSubmit,
-    register,
-    formState: { errors },
-  } = useForm();
+    mutate: getNightBird,
+    isLoading: isLoadingNightBirdData,
+    data: nightBirdData,
+  } = useGetTokenMedata();
+  const {
+    mutate: getMoonBird,
+    isLoading: isLoadingMoonBirdData,
+    data: moonBirdData,
+  } = useGetTokenMedata();
+  const {
+    mutate: getAiBanner,
+    isLoading: isLoadingAiBannerData,
+    data: aiBannerData,
+  } = useGetTokenMedata();
+
+  const { handleSubmit, register } = useForm();
+
+  const isLoading =
+    isLoadingNightBirdData || isLoadingMoonBirdData || isLoadingAiBannerData;
 
   const handleOnSubmit = (value: any) => {
-    mutate(value[FieldName]);
+    getNightBird({
+      contractAddress: AINB_CONTRACT_ADDRESS,
+      tokenId: value[FieldName],
+    });
+    getMoonBird({
+      contractAddress: MOONBIRD_ADDRESS,
+      tokenId: value[FieldName],
+    });
+    getAiBanner({
+      contractAddress: AI_CONTRACT_ADDRESS,
+      tokenId: value[FieldName],
+    });
   };
 
   return (
@@ -71,7 +72,8 @@ export const App = () => {
 
           <Heading>AINightbirds</Heading>
           <Text size="md">
-            Search & Download Hi-Resolution, Pixelated Ai nightbird
+            Search & Download Hi-Res, Pixelated Ai Nightbird, MoonBird & Ai
+            Banner
           </Text>
 
           <Flex>
@@ -94,7 +96,7 @@ export const App = () => {
                     })}
                   />
                   <FormHelperText textAlign="left" color="red.500">
-                    {errors[FieldName] && errors[FieldName].message}
+                    {/* {errors[FieldName] && errors[FieldName].message} */}
                   </FormHelperText>
                   <FormHelperText>
                     You don't even have to connect you're address Hoot Hoot!
@@ -112,38 +114,55 @@ export const App = () => {
             </form>
           </Flex>
 
-          {hiResImg && (
-            <Flex
-              gap="1rem"
-              flexWrap={isLargerThan720 ? "nowrap" : "wrap"}
-              justifyContent="center"
-            >
+          <Flex
+            gap="1rem"
+            flexWrap={isLargerThan720 ? "nowrap" : "wrap"}
+            justifyContent="center"
+          >
+            {nightBirdData?.media?.[0].gateway && (
               <TokenCard
-                name={metadata?.name}
-                title="Hi-Resolution"
-                src={hiResImg}
+                name={nightBirdData?.metadata?.name}
+                title="Hi-Resolution NightBird"
+                src={nightBirdData?.media?.[0].gateway}
                 height={350}
                 width={350}
               />
+            )}
+            {moonBirdData?.media?.[0].gateway && (
               <TokenCard
-                name={metadata?.name}
-                title="16-bit"
-                src={hiResImg}
+                name={moonBirdData?.metadata?.name}
+                title="Moonbird"
+                src={moonBirdData?.media?.[0].gateway}
+                height={350}
+                width={350}
+              />
+            )}
+            {nightBirdData?.media?.[0].gateway && (
+              <TokenCard
+                name={nightBirdData?.metadata?.name}
+                title="16-bit NightBird"
+                src={nightBirdData?.media?.[0].gateway}
                 height={350}
                 width={350}
                 pixelSize={8}
               />
+            )}
+          </Flex>
+          <Flex
+            gap="1rem"
+            flexWrap={isLargerThan720 ? "nowrap" : "wrap"}
+            justifyContent="center"
+          >
+            {aiBannerData?.media?.[0].gateway && (
               <TokenCard
-                name={metadata?.name}
-                title="8-bit"
-                src={hiResImg}
+                name={aiBannerData?.metadata?.name}
+                title="Hi-Resolution Ai Banner"
+                src={aiBannerData?.media?.[0].gateway}
                 height={350}
-                width={350}
-                pixelSize={16}
+                width={1080}
               />
-            </Flex>
-          )}
-
+            )}
+          </Flex>
           {/* <Text fontSize="16px">
             This site is not affiliated with AINightbirds <br /> © Made with
             React, Vercel
