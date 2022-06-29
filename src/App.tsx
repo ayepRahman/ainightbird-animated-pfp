@@ -98,7 +98,7 @@ export const App = () => {
                     {/* {errors[FieldName] && errors[FieldName].message} */}
                   </FormHelperText>
                   <FormHelperText>
-                    You don't even have to connect you're address Hoot Hoot!
+                    You don't even have to connect to your wallet Hoot Hoot!
                   </FormHelperText>
                 </Box>
 
