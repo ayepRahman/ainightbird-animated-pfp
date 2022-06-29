@@ -162,11 +162,11 @@ export const App = () => {
               />
             )}
           </Flex>
-          {/* <Text fontSize="16px">
+          <Text fontSize="16px">
             This site is not affiliated with AINightbirds <br /> © Made with
             React, Vercel
-          </Text> */}
-          <Text fontSize="16px">
+          </Text>
+          <Text fontSize="16px" mb="3rem">
             If you love this service, would be greatful <br /> for a donation
             airdrop to <b>onlyayep.eth</b>
           </Text>
