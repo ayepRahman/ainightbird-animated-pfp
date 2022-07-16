@@ -42,6 +42,8 @@ export const App = () => {
     data: aiBannerData,
   } = useGetTokenMedata();
 
+  console.log("aiBannerData", aiBannerData);
+
   const { handleSubmit, register } = useForm();
 
   const isLoading =
@@ -164,11 +166,8 @@ export const App = () => {
           </Flex>
           <Text fontSize="16px">
             This site is not affiliated with AINightbirds <br /> © Made with
-            React, Vercel
-          </Text>
-          <Text fontSize="16px" mb="3rem">
-            If you love this service, would be greatful <br /> for a donation
-            airdrop to <b>onlyayep.eth</b>
+            React, Vercel. If you love this service, would be greatful <br />{" "}
+            for a donation airdrop to <b>onlyayep.eth</b>
           </Text>
         </VStack>
       </Grid>
